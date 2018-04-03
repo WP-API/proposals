@@ -266,13 +266,22 @@ End user-facing communication is not needed or desired, so does not need to be i
 
 # Drawbacks
 
-<!--
-Why should we *not* do this?
+## Overloading revisions
 
-Consider the impact on end-users, API consumer developers, WordPress core developers, user complexity, and interaction with other proposals.
+Overloading revisions with multiple meanings may be confusing to users. While autosaves are implemented internally with revisions, this isn't really exposed to users. Overloading the terminology of "revisions" (seen as the post's history) with future revisions may be difficult to understand.
 
-There are tradeoffs to choosing any path, please attempt to identify them here.
--->
+This isn't believed to be a huge concern, as currently autosave functionality is not available outside the TinyMCE-based editor. Most developers cannot currently work with autosaves at all, so they have no existing mental model of how autosaves work with which this would clash.
+
+Additionally, as autosaves are expected to be advanced functionality only used by complex editing interfaces, most developers will not need to think about how they work.
+
+
+## Exposing internals
+
+Making autosaves available as revisions may expose the internal behaviour of how autosaves work. Under the hood, autosaves really are stored as revisions, and are differentiated based on a slug suffix. If the underlying storage mechanism for autosaves changes, this may break the public interface via the REST API.
+
+It is unlikely that this will be a concern. With the `revision_type` property, we can distinguish between varying types of revisions and implement different code paths internally. The implementation will likely take the path of using the native autosave functions (e.g. `wp_create_post_autosave`) instead of using the revisions API directly, which will shield it from underlying changes.
+
+For this to cause problems with the REST API would also likely necessitate WordPress breaking backwards compatibility for internal APIs, which is also unlikely.
 
 *TODO*: Discuss drawbacks.
 
