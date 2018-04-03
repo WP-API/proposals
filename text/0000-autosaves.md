@@ -221,7 +221,40 @@ End user-facing communication is not needed or desired, so does not need to be i
 > The primary difference between autosaves and regular post saves is that autosaves represent a "future revision" of the post. Editors create an autosave automatically for users and continually update this to persist changes before the post is actually updated. When the user chooses to actually save their changes, this "future revision" can be "committed"; that is, the staged changes can be applied to the post.
 >
 >
+> ## New and Changed Functionality
+>
+> The revisions endpoints in the REST API have been changed to support autosaves as a "future revision". The biggest change to revisions for existing users is a new `revision_type` field. This can be either `revision` for regular revisions, or `autosave` for autosaves. Both revisions and autosaves are available via the `GET /wp/v2/posts/{id}/revisions` endpoint.
+>
+> A new `revision_type` query parameter has been added to the `GET /wp/v2/posts/{id}/revisions` endpoint. This allows querying each type of revision, either individually (`?revision_type=autosave`) or together (`?revision_type=autosave,revision`). By default, this parameter is set to `revision`, which preserves the existing behaviour for clients. An `author` query parameter has also been added to allow querying revisions by author.
+>
+> Three new write endpoints have been added:
+>
+> * `POST /wp/v2/posts/{id}/revisions` creates a new autosave
+> * `PUT /wp/v2/posts/{id}/revisions/{rev_id}` updates an autosave
+> * `POST /wp/v2/posts/{id}/revisions/{rev_id}` commits an autosave (i.e. applies the autosaved changes to the post)
+>
+> `POST /wp/v2/posts/{id}/revisions/{rev_id}` is also useful for revisions, and it restores the post to this revision. When calling this endpoint, the autosave or revision may be deleted as a side-effect.
+>
+> It is important to note that `PUT` and `POST` have differing functionality on the same route; for clients that don't support HTTP/1.1 methods like `PUT`, you may need to send a [`POST` with a method override](https://developer.wordpress.org/rest-api/using-the-rest-api/global-parameters/#_method-or-x-http-method-override-header).
+>
+>
 > ## Typical Autosave Flow
+>
+> Editors will typically follow an autosave flow similar to the following:
+>
+> * User opens a post to edit
+>   * Editor loads `GET /wp/v2/posts/{id}/revisions?revision_type=autosave&author={id}` to check for existing autosaves
+> * User makes their first change to the post
+>   * Editor starts an autosave revision: `POST /wp/v2/posts/{id}/revisions`
+> * User continues editing
+>   * Editor updates the autosave revision: `PUT /wp/v2/posts/{id}/revisions/{rev_id}`
+> * User hits Save to commit their changes
+>   * Editor commits the autosave revision: `POST /wp/v2/posts/{id}/revisions/{rev_id}`
+>   * As a side-effect, WordPress deletes the autosave revision, as it is now no longer needed
+> * User makes another change
+>   * Editor repeats above steps
+>
+> If the user discards their changes, the editor can delete the autosave with `DELETE /wp/v2/posts/{id}/revisions/{rev_id}`
 >
 > *TODO*: Finish field guide content.
 
