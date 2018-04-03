@@ -41,7 +41,7 @@ The design adds the following properties to Revision resources, denoted with JSO
 ```json
 {
 	"revision_type": {
-		"description": "Type of revision."
+		"description": "Type of revision.",
 		"type": "string",
 		"readonly": true,
 		"enum": [
