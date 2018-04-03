@@ -295,6 +295,9 @@ Optional, but suggested for first drafts. What parts of the design are still TBD
 -->
 
 * Continue to discuss and refine the flow.
+* How does committing an autosave work when the user has other changes to save?
+	* Does the editor have to send a `POST /revisions/{rev_id}`, then also send a `PUT /posts/{id}` to update the other options?
+	* Should autosaves be extended to support other fields instead?
 
 
 # Credits
