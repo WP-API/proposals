@@ -177,7 +177,12 @@ Only `autosave` revisions can be created externally, as regular revisions are ma
 
 This endpoint creates a new autosave revision internally, and returns the representation of that revision. All the usual checks are applied to the autosave revision, including the one-autosave-per-user check.
 
+
+### Error Cases
+
 If an existing autosave for the user already exists, a `409 Conflict` status is returned, indicating that the user already has an autosave. This error should include the ID of the existing autosave revision.
+
+If the post is a draft, a `400 Bad Request` status is returned, indicating that autosaves cannot be created for draft posts.
 
 
 ## New "Commit Revision" Endpoint
