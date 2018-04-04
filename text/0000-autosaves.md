@@ -62,7 +62,7 @@ The design adds the following properties to Revision resources, denoted with JSO
 This design adds the following query parameters to the Revision list endpoint (`GET /wp/v2/posts/{id}/revisions`):
 
 * `author` (integer): Filter to just revisions by this author.
-* `revision_type` (string or array, default `revision`): Types of revision to include. By default, only includes full revisions.
+* `revision_type` (string or array, default `autosave,revision`): Types of revision to include.
 
 
 ## New "Create Revision" endpoint
@@ -225,7 +225,7 @@ End user-facing communication is not needed or desired, so does not need to be i
 >
 > The revisions endpoints in the REST API have been changed to support autosaves as a "future revision". The biggest change to revisions for existing users is a new `revision_type` field. This can be either `revision` for regular revisions, or `autosave` for autosaves. Both revisions and autosaves are available via the `GET /wp/v2/posts/{id}/revisions` endpoint.
 >
-> A new `revision_type` query parameter has been added to the `GET /wp/v2/posts/{id}/revisions` endpoint. This allows querying each type of revision, either individually (`?revision_type=autosave`) or together (`?revision_type=autosave,revision`). By default, this parameter is set to `revision`, which preserves the existing behaviour for clients. An `author` query parameter has also been added to allow querying revisions by author.
+> A new `revision_type` query parameter has been added to the `GET /wp/v2/posts/{id}/revisions` endpoint. This allows querying each type of revision, either individually (`?revision_type=autosave`) or together (`?revision_type=autosave,revision`). By default, this parameter is set to `autosave,revision`, which preserves the existing behaviour for clients. An `author` query parameter has also been added to allow querying revisions by author.
 >
 > Three new write endpoints have been added:
 >
